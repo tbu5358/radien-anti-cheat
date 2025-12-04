@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../src/commands/admin/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AACpC,OAAO,EAAE,cAAc,EAAgB,MAAM,YAAY,CAAC;AAE1D;;;;;GAKG;AACH,wBAAgB,qBAAqB,CAAC,MAAM,EAAE,MAAM,GAAG,IAAI,CAI1D;AAED;;GAEG;AACH,OAAO,EACL,cAAc,GACf,CAAC;AAEF;;GAEG;AACH,eAAO,MAAM,gBAAgB,wEAE5B,CAAC"}

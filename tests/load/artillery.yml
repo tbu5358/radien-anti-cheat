@@ -1,0 +1,58 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: Warm up
+    - duration: 120
+      arrivalRate: 20
+      name: Sustained traffic
+  payload:
+    - path: "./payloads/anti-cheat-events.csv"
+      fields:
+        - "playerId"
+        - "username"
+        - "gameId"
+        - "violationType"
+        - "severity"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: Health & metrics polling
+    flow:
+      - get:
+          url: "/health"
+      - get:
+          url: "/metrics"
+
+  - name: Anti-cheat webhook ingestion
+    flow:
+      - function: "generateSignature"
+      - post:
+          url: "/webhooks/anticheat"
+          headers:
+            x-webhook-signature: "{{ webhookSignature }}"
+          json:
+            playerId: "{{ playerId }}"
+            username: "{{ username }}"
+            gameId: "{{ gameId }}"
+            violationType: "{{ violationType }}"
+            severity: "{{ severity }}"
+            evidence:
+              - "screenshot-1.jpg"
+            timestamp: "{{ now }}"
+            serverId: "server-load-test"
+            metadata:
+              simulated: true
+
+functions:
+  generateSignature: |
+    const crypto = require('crypto');
+    const payload = JSON.stringify(request.payload.body);
+    const secret = process.env.WEBHOOK_SECRET || 'replace-me';
+    const signature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+    request.vars.webhookSignature = signature;
+    request.vars.now = new Date().toISOString();
+
