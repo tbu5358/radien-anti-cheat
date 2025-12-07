@@ -20,6 +20,8 @@ const buttonUtils_1 = require("./buttonUtils");
  * @param interaction The Discord button interaction
  */
 async function handleSpectatePlayer(interaction) {
+    // Defer reply immediately to prevent timeout
+    await interaction.deferReply({ ephemeral: true });
     const startTime = Date.now();
     let caseId = null;
     let playerId = null;
@@ -41,7 +43,7 @@ async function handleSpectatePlayer(interaction) {
                 reason: validation.errorMessage,
             });
             await (0, buttonUtils_1.logButtonInteraction)(interaction, caseId, playerId, 'spectate_denied', false, { reason: validation.errorMessage });
-            await interaction.reply((0, buttonUtils_1.createButtonResponse)('error', 'Permission Denied', validation.errorMessage || 'You do not have permission to spectate players.'));
+            await interaction.editReply((0, buttonUtils_1.createButtonResponse)('error', 'Permission Denied', validation.errorMessage || 'You do not have permission to spectate players.'));
             return;
         }
         // Validate that we have a player ID
@@ -49,11 +51,9 @@ async function handleSpectatePlayer(interaction) {
             const errorMsg = 'Could not determine player ID from this interaction';
             console.error(`❌ ${errorMsg}`, { customId: interaction.customId, caseId });
             await (0, buttonUtils_1.logButtonInteraction)(interaction, caseId, null, 'spectate_failed', false, { error: 'missing_player_id' });
-            await interaction.reply((0, buttonUtils_1.createButtonResponse)('error', 'Invalid Context', 'Unable to determine which player to spectate. Please ensure the case embed contains player information.'));
+            await interaction.editReply((0, buttonUtils_1.createButtonResponse)('error', 'Invalid Context', 'Unable to determine which player to spectate. Please ensure the case embed contains player information.'));
             return;
         }
-        // Acknowledge the interaction immediately
-        await interaction.deferReply({ ephemeral: true });
         // Generate spectate link
         const spectateUrl = (0, buttonUtils_1.generateSpectateLink)(playerId);
         // Log the spectate access
@@ -104,7 +104,7 @@ async function handleSpectatePlayer(interaction) {
             await interaction.editReply(errorResponse);
         }
         else {
-            await interaction.reply(errorResponse);
+            await interaction.editReply(errorResponse);
         }
     }
 }

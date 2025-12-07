@@ -22,6 +22,8 @@ const buttonUtils_1 = require("./buttonUtils");
  * @param interaction The Discord button interaction
  */
 async function handleResolveCase(interaction) {
+    // Defer reply immediately to prevent timeout
+    await interaction.deferReply({ ephemeral: true });
     const startTime = Date.now();
     let caseId = null;
     let playerId = null;

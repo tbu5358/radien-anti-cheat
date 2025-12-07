@@ -24,6 +24,9 @@ import {
  * @param interaction The Discord button interaction
  */
 export async function handleSpectatePlayer(interaction: ButtonInteraction): Promise<void> {
+  // Defer reply immediately to prevent timeout
+  await interaction.deferReply({ ephemeral: true });
+
   const startTime = Date.now();
   let caseId: string | null = null;
   let playerId: string | null = null;
@@ -57,7 +60,7 @@ export async function handleSpectatePlayer(interaction: ButtonInteraction): Prom
         { reason: validation.errorMessage }
       );
 
-      await interaction.reply(
+      await interaction.editReply(
         createButtonResponse(
           'error',
           'Permission Denied',
@@ -81,7 +84,7 @@ export async function handleSpectatePlayer(interaction: ButtonInteraction): Prom
         { error: 'missing_player_id' }
       );
 
-      await interaction.reply(
+      await interaction.editReply(
         createButtonResponse(
           'error',
           'Invalid Context',
@@ -90,9 +93,6 @@ export async function handleSpectatePlayer(interaction: ButtonInteraction): Prom
       );
       return;
     }
-
-    // Acknowledge the interaction immediately
-    await interaction.deferReply({ ephemeral: true });
 
     // Generate spectate link
     const spectateUrl = generateSpectateLink(playerId);
@@ -176,7 +176,7 @@ export async function handleSpectatePlayer(interaction: ButtonInteraction): Prom
     if (wasDeferred) {
       await interaction.editReply(errorResponse);
     } else {
-      await interaction.reply(errorResponse);
+      await interaction.editReply(errorResponse);
     }
   }
 }

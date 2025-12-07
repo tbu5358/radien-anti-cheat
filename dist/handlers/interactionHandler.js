@@ -143,6 +143,8 @@ async function routeInteraction(interaction) {
     try {
         if (interaction.isButton()) {
             interactionMetrics.buttonInteractions++;
+            // Defer reply immediately to prevent "Internal_error"
+            await interaction.deferReply({ ephemeral: true });
             await (0, buttons_1.handleButtonInteraction)(interaction);
             await (0, auditMiddleware_1.logPerformanceMetric)(auditContext, 'button_handler', Date.now() - handlerStartTime);
         }

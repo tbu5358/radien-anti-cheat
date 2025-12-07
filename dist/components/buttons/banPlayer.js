@@ -25,6 +25,8 @@ const buttonUtils_1 = require("./buttonUtils");
  * @param interaction The Discord button interaction
  */
 async function handleBanPlayer(interaction) {
+    // Defer reply immediately to prevent timeout
+    await interaction.deferReply({ ephemeral: true });
     let caseId = null;
     let playerId = null;
     try {

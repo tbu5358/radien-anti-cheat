@@ -19,6 +19,8 @@ const buttonUtils_1 = require("./buttonUtils");
  * @param interaction The Discord button interaction
  */
 async function handleFlagPlayer(interaction) {
+    // Defer reply immediately to prevent timeout
+    await interaction.deferReply({ ephemeral: true });
     const startTime = Date.now();
     let caseId = null;
     let playerId = null;
@@ -40,7 +42,7 @@ async function handleFlagPlayer(interaction) {
                 reason: validation.errorMessage,
             });
             await (0, buttonUtils_1.logButtonInteraction)(interaction, caseId, playerId, 'flag_player_denied', false, { reason: validation.errorMessage });
-            await interaction.reply((0, buttonUtils_1.createButtonResponse)('error', 'Permission Denied', validation.errorMessage || 'You do not have permission to flag players.'));
+            await interaction.editReply((0, buttonUtils_1.createButtonResponse)('error', 'Permission Denied', validation.errorMessage || 'You do not have permission to flag players.'));
             return;
         }
         // Validate required context
@@ -51,8 +53,6 @@ async function handleFlagPlayer(interaction) {
             await interaction.reply((0, buttonUtils_1.createButtonResponse)('error', 'Invalid Context', 'Unable to determine which case this action relates to. Please try refreshing the case embed.'));
             return;
         }
-        // Acknowledge the interaction immediately to prevent timeout
-        await interaction.deferReply({ ephemeral: true });
         // Call the moderation service to flag the player
         const result = await (0, moderationService_1.flagPlayer)(caseId, interaction.user.id, 'Flagged by moderator via Discord');
         // Log successful action

@@ -32,6 +32,9 @@ import {
  * @param interaction The Discord button interaction
  */
 export async function handleBanPlayer(interaction: ButtonInteraction): Promise<void> {
+  // Defer reply immediately to prevent timeout
+  await interaction.deferReply({ ephemeral: true });
+
   let caseId: string | null = null;
   let playerId: string | null = null;
 

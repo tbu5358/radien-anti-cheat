@@ -23,6 +23,9 @@ import {
  * @param interaction The Discord button interaction
  */
 export async function handleFlagPlayer(interaction: ButtonInteraction): Promise<void> {
+  // Defer reply immediately to prevent timeout
+  await interaction.deferReply({ ephemeral: true });
+
   const startTime = Date.now();
   let caseId: string | null = null;
   let playerId: string | null = null;
@@ -56,7 +59,7 @@ export async function handleFlagPlayer(interaction: ButtonInteraction): Promise<
         { reason: validation.errorMessage }
       );
 
-      await interaction.reply(
+      await interaction.editReply(
         createButtonResponse(
           'error',
           'Permission Denied',
@@ -89,9 +92,6 @@ export async function handleFlagPlayer(interaction: ButtonInteraction): Promise<
       );
       return;
     }
-
-    // Acknowledge the interaction immediately to prevent timeout
-    await interaction.deferReply({ ephemeral: true });
 
     // Call the moderation service to flag the player
     const result = await flagPlayerService(caseId, interaction.user.id, 'Flagged by moderator via Discord');
